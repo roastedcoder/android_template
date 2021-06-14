@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,30 +21,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val images = listOf<Int>(
+                R.drawable.image1,
+                R.drawable.image2,
+                R.drawable.image3,
+                R.drawable.image4,
+                R.drawable.image5,
+                R.drawable.image6
+        )
 
-        val firstFragment = FirstFragment()
-        val secondFragment = SecondFragment()
-        val thirdFragment = ThirdFragment()
-        setCurrentFragment(firstFragment)
-
-        bottomNavigationView.setOnNavigationItemSelectedListener { // item selected listener
-            when(it.itemId) {
-                R.id.miHome -> setCurrentFragment(firstFragment)
-                R.id.miMessages -> setCurrentFragment(secondFragment)
-                R.id.miProfile -> setCurrentFragment(thirdFragment)
-            }
-            true
-        }
-        bottomNavigationView.getOrCreateBadge(R.id.miMessages).apply { // badge on navigation element
-            number = 99
-            isVisible = true
-        }
+        val adapter = ViewPagerAdapter(images)
+        
+        viewPager.adapter = adapter
+        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        viewPager.beginFakeDrag()
+        viewPager.fakeDragBy(-1.5f)
+        viewPager.endFakeDrag()
     }
-
-    // utility function to set fragment as current fragment after selecting
-    private fun setCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.flFragment, fragment)
-            commit()
-        }
 }
