@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu" /> <!--  set menu to show as botton nav menu  -->
+        app:menu="@menu/bottom_nav_menu" /> <!--  set menu to show as bottom nav menu  -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
