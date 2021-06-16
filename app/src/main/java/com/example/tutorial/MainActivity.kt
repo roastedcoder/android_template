@@ -1,6 +1,7 @@
 package com.example.tutorial
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,33 +23,44 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        // we should use shared preferences to save small data such as setting preferences, game high-score etc.
+        // for larger data(to do app) we need a database
+        val sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        // whenever we want to write to shared preferences we need an editor
+        val editor = sharedPref.edit()
 
-        // to handle clicks on navigation items
-        navView.setNavigationItemSelectedListener {
-            when(it.itemId) {
-                R.id.miItem1 -> Toast.makeText(applicationContext, "Clicked Item1", Toast.LENGTH_SHORT).show()
-                R.id.miItem2 -> Toast.makeText(applicationContext, "Clicked Item2", Toast.LENGTH_SHORT).show()
-                R.id.miItem3 -> Toast.makeText(applicationContext, "Clicked Item3", Toast.LENGTH_SHORT).show()
+        btnSave.setOnClickListener {
+            val name = etName.text.toString()
+            val age = etAge.text.toString().toInt()
+            val isAdult = cbAdult.isChecked
+
+            editor.apply {
+                // it takes a key- value pair to fetch the data later
+                putString("name", name)
+                putInt("age", age)
+                putBoolean("isAdult", isAdult)
+                apply()
+                // we can also use commit here instead of apply
+                // but since it puts the data synchronously in shared preferences
+                // and blocks the main thread and UI
+                // hence we prefer to use apply here
             }
-            true
         }
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(toggle.onOptionsItemSelected(item)) {
-            return true
+        btnLoad.setOnClickListener {
+            val name = sharedPref.getString("name", null)
+            val age = sharedPref.getInt("age", 0)
+            val isAdult = sharedPref.getBoolean("isAdult", false)
+
+            etName.setText(name.toString())
+            etAge.setText(age.toString())
+            cbAdult.isChecked = isAdult
         }
-        return super.onOptionsItemSelected(item)
     }
 }
