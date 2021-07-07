@@ -1,51 +1,49 @@
 package com.example.tutorial
 
-import android.app.*
-import android.content.*
-import android.graphics.Color
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.DragEvent
-import android.view.DragEvent.ACTION_DRAG_LOCATION
-import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_task.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TaskClickListener {
 
-    lateinit var receiver: AirplaneModeChangedReceiver
+    lateinit var viewModel: TaskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        receiver = AirplaneModeChangedReceiver()
-        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
-            registerReceiver(receiver, it)
-        }
+        rvTasks.layoutManager = LinearLayoutManager(this)
+        val adapter = TaskAdapter(this, this)
+        rvTasks.adapter = adapter
+
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(TaskViewModel::class.java)
+
+        viewModel.allTasks.observe(this, Observer { list ->
+            list?.let {
+                adapter.updateList(it)
+            }
+        })
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onItemClicked(tasks: Tasks) {
+        viewModel.deleteTask(tasks)
+    }
 
-        unregisterReceiver(receiver)
+    fun addTask(view: View) {
+        val text = etInput.text.toString()
+        text.trim()
+        if (text.isNotEmpty()) {
+            val newTask = Tasks(text)
+            viewModel.addTask(newTask)
+            etInput.text.clear()
+        }
     }
 }
