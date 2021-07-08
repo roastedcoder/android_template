@@ -24,9 +24,6 @@ class TaskAdapter(
 
         viewHolder.taskDelete.setOnClickListener {
             val position = viewHolder.adapterPosition
-//            if (position != RecyclerView.NO_POSITION) {
-//                listener.onItemClicked(taskList[position])
-//            }
             listener.onItemClicked(taskList[position])
         }
         return viewHolder
