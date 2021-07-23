@@ -5,40 +5,60 @@
 
     <data>
         <variable
-            name="quote"
-            type="com.example.tutorial.Quote" />
+            name="mainViewModel"
+            type="com.example.tutorial.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="16dp"
         tools:context=".MainActivity">
 
         <TextView
-            android:id="@+id/tvFirstValue"
+            android:id="@+id/tvQuote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{quote.text}"
+            android:text="@{mainViewModel.quoteLiveData}"
             android:textAlignment="center"
             android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/tvSecondValue"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvSecondValue"
+        <EditText
+            android:id="@+id/etChange"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{quote.author}"
-            android:textAlignment="center"
-            android:textSize="30sp"
+            android:layout_marginTop="32dp"
+            android:text="@={mainViewModel.quoteLiveData}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvQuote" />
+
+        <Button
+            android:id="@+id/btnUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()-> mainViewModel.updateQuote()}"
+            android:text="update"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnReset"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="reset"
+            android:onClick="@{()-> mainViewModel.resetQuote()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvFirstValue" />
+            app:layout_constraintStart_toEndOf="@+id/btnUpdate" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
