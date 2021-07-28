@@ -7,6 +7,7 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
+import com.example.tutorial.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -14,22 +15,24 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var database: ContactDatabase
-
+    lateinit var binding: ActivityMainBinding
+    lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        database = ContactDatabase.getDatabase(this)
+        val dao = QuoteDB.getDatabase(applicationContext).quoteDao()
+        val repository = QuoteRepository(dao)
+        mainViewModel = ViewModelProvider(this, MainViewModelFactory(repository)).get(MainViewModel::class.java)
 
-        GlobalScope.launch {
-            database.contactDao().insertContact(Contact("Alice", "999999", Date(), 0))
-        }
-    }
-
-    fun getData(view: View) {
-        database.contactDao().getContact().observe(this, {
-            Log.d("weird", it.toString())
+        mainViewModel.getQuotes().observe(this, androidx.lifecycle.Observer {
+            binding.quotes = it.toString()
         })
+
+        binding.btnInsert.setOnClickListener {
+            val quote= Quote(0, "this is test", "testing")
+            mainViewModel.insertQuote(quote)
+        }
+
     }
 }
